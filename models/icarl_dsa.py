@@ -14,7 +14,7 @@ from models.base import BaseLearner
 from utils.inc_net import IncrementalNet
 from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import target2onehot, tensor2numpy,denormalize_cifar100,tensor2img
-from dd_algorithms.dm import DistributionMatching
+from dd_algorithms.dm import GradientMatching
 import time
 from dd_algorithms.utils import DiffAugment,ParamDiffAug,get_time
 EPSILON = 1e-8

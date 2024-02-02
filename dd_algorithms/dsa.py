@@ -29,7 +29,7 @@ im_size= [32,32]
 batch_real = 256
 device = 'cuda:3'
 dis_metric = 'ours'
-class DistributionMatching():
+class GradientMatching():
     def __init__(self, args,pretrained = False):
 
         self._device = args["device"][0]
