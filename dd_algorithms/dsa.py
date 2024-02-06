@@ -23,7 +23,7 @@ lr_img = 0.1
 lr_net = 0.01
 dsa_strategy = 'color_crop_cutout_flip_scale_rotate'
 BN  =True
-channel = 3 
+channel = 3
 dsa = False if dsa_strategy in ['none', 'None'] else True
 im_size= [32,32]
 batch_real = 256
@@ -43,7 +43,7 @@ class GradientMatching():
             data = torch.load(fname, map_location='cpu')['data']
             self.images_train_all = data[0][0]
             self.labels_train_all = data[0][1]
-        
+
     def gen_synthetic_data(self, old_model, initial_data, real_data, real_label, class_range, image_syn=None):
         if self.pretrained:
             step = (class_range[-1]+1)//10
@@ -155,9 +155,9 @@ class GradientMatching():
                     related_class = c - class_range[0]
                     img_real = get_images(c, batch_real)
                     lab_real = torch.ones((img_real.shape[0],), device=self._device, dtype=torch.long) * c
-                    img_syn = image_syn[c * ipc:(c + 1) * ipc].reshape(
-                        (ipc, channel, im_size[0], im_size[1]))
-                    img_syn1 = image_syn[related_class * ipc:(related_class + 1) * ipc].reshape(
+                    #img_syn1 = image_syn[c * ipc:(c + 1) * ipc].reshape(
+                    #    (ipc, channel, im_size[0], im_size[1]))
+                    img_syn = image_syn[related_class * ipc:(related_class + 1) * ipc].reshape(
                         (ipc, channel, im_size[0], im_size[1]))
                     lab_syn = torch.ones((ipc,), device=self._device, dtype=torch.long) * c
 
@@ -295,4 +295,3 @@ class GradientMatching():
         # logging.info("Exemplar size: {}".format(len(new_syn[0])))
         # # pdb.set_trace()
         # return new_syn
-
