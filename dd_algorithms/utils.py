@@ -207,6 +207,54 @@ def get_eval_pool(eval_mode, model, model_eval):
         model_eval_pool = [model_eval]
     return model_eval_pool
 
+class TensorDataset(Dataset):
+    def __init__(self, images, labels): # images: n x c x h x w tensor
+        self.images = images.detach().float()
+        self.labels = labels.detach()
+
+    def __getitem__(self, index):
+        return self.images[index], self.labels[index]
+
+    def __len__(self):
+        return self.images.shape[0]
+def epoch(mode, dataloader, net, optimizer, criterion, device, dsa_param, aug ):
+    loss_avg, acc_avg, num_exp = 0, 0, 0
+    net = net.to(device)
+    criterion = criterion.to(device)
+
+    if mode == 'train':
+        net.train()
+    else:
+        net.eval()
+
+    for i_batch, datum in enumerate(dataloader):
+        img = datum[0].float().to(device)
+        if aug:
+            if aug:
+                img = DiffAugment(img, 'color_crop_cutout_flip_scale_rotate', param=dsa_param)
+            else:
+                #img = augment(img, dc_aug_param, device=device)
+                img = img  ## dc to do
+        lab = datum[1].long().to(device)
+        n_b = lab.shape[0]
+
+        output = net(img)['logits']
+        loss = criterion(output, lab)
+        acc = np.sum(np.equal(np.argmax(output.cpu().data.numpy(), axis=-1), lab.cpu().data.numpy()))
+
+        loss_avg += loss.item()*n_b
+        acc_avg += acc
+        num_exp += n_b
+
+        if mode == 'train':
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    loss_avg /= num_exp
+    acc_avg /= num_exp
+
+    return loss_avg, acc_avg
 
 class ParamDiffAug():
     def __init__(self):

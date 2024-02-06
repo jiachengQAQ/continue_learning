@@ -14,7 +14,7 @@ from models.base import BaseLearner
 from utils.inc_net import IncrementalNet
 from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import target2onehot, tensor2numpy,denormalize_cifar100,tensor2img
-from dd_algorithms.dm import GradientMatching
+from dd_algorithms.dsa import GradientMatching
 import time
 from dd_algorithms.utils import DiffAugment,ParamDiffAug,get_time
 EPSILON = 1e-8
@@ -44,7 +44,7 @@ class iCaRL_DSA(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
         self._network = IncrementalNet(args, False)
-        self.dd = DistributionMatching(args)
+        self.dd = GradientMatching(args)
         self.dsa_param = ParamDiffAug()
         self.dsa_strategy = dsa_strategy
 
